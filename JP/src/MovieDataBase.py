@@ -3,59 +3,68 @@
 #Movie Data Base
 
 def DisplayList(MovieList):
-    i = 0
     MovieNum = 1
     if len(MovieList) > 0:
         print(" Here is the list of Movies in your collection:")
-        while i < len(MovieList): # loop to display each movie in the list
-            print(" ", MovieNum, " ", MovieList[i])
-            i += 1 # indexes through the list
+        for i in MovieList: # loop to display each movie in the list
+            print(" ", MovieNum,")", " ", i)
             MovieNum += 1 # numbers the movies
     else:
         print(" ........No Movies in Data Base.......")
 def AddtoList(MovieList):
      Year = 0
+     i = 0
+     DisplayList(MovieList)
      
      while len(str(Year)) != 4 or Year < 1895 and Exception != True: # checks the length of the year and there is no exception. 
         try:
             Year = int(input(" Enter in the year of the Movie Title:"))
-            if len(str(Year)) != 4:
+            if len(str(Year)) != 4 or Year < 1895:
                 print(" Invalid Entry, please try again!")
-            elif Year < 1895:
-                 print(" Invalid Entry, please try again!")
         except Exception:
             print(" Invalid Entry, please try again!")
 
      MovieTitle = str(input(" Enter the Movie Title: "))
      MovieEntry = (str(Year) +": "+ MovieTitle)
-     if MovieEntry in MovieList:
+     UCMovieEntry = MovieEntry.upper()
+     UCMovieList = list()
+     while i < len(MovieList): # converts everything to upper case to ensure it is not already in list
+         UCMovieList.append(MovieList[i].upper())
+         i += 1
+     if UCMovieEntry in UCMovieList:
         print(".....Movie already added to List....")
      else:
         MovieList.append(MovieEntry)
-        print(" .............Movie Added...............")
+        print(" .............Movie Added...............")     
 def RemoveFrList(MovieList):
-     if len(MovieList) <= 0:
-            print(" .......No Movies in the Database......")
-     elif len(MovieList) > 0:
-            DisplayList(MovieList)
+    Removed = False
+    if len(MovieList) <= 0:
+        print(" .......No Movies in the Database......")
+    elif len(MovieList) > 0:
+        DisplayList(MovieList)
+        while Removed == False:
             try:
-                if len(MovieList) > 0:
-                    removeTitle = int(input(" Enter the number for the title you would like to have removed: "))
-                    MovieList.remove(MovieList[removeTitle - 1]) # taking away from the list
+                removeTitle = int(input(" Enter the number for the title you would like to have removed: "))
+                if removeTitle < len(MovieList) and removeTitle > len(MovieList) or removeTitle == 0:
+                    print(" ....Invalid Entry....")
+                    Removed = False
+
                 else:
-                    pass
+                    MovieList.remove(MovieList[removeTitle - 1]) # taking away from the list
+                    Removed = True
+                    print(" ....Movie has been Removed....")
+                    #DisplayList(MovieList)
             except Exception:
-                print(" Invalid Entry, please try again!")
+                print(" ....Invalid Entry....")  
 def OldtoNew(MovieList):
     MovieList.sort()
-    i = 0
     MovieNum = 1
     if len(MovieList) > 0:
-        print(" Here is the list of Movies Oldest to Newest:")
-        DisplayList(MovieList) # Function Call
+        for i in MovieList: # loop to display each movie in the list
+            print(" ", MovieNum,")", " ", i)
+            MovieNum += 1 # numbers the movies
     else:
         print(" .......No Movies in the Database......")
-
 def ShorttoLong(MovieList):
     MovieList.sort(key = len) # sorts list based on length
     i = 0
@@ -83,30 +92,32 @@ def AtoZ(MovieList):
 
     print(" Here is the list of Movies in your collection from A to Z: ")
     while i < len(MovieList): # loop to display each movie in the list
-        AtoZList.append(MovieList[i][6:])
+        AtoZList.append(MovieList[i][6:] +" :" + MovieList[i][:4:] )
         i += 1
-    AtoZList = sorted(AtoZList) # sorts the list
+    AtoZList.sort()  
     for i in AtoZList:
-        print(j,"",i)
+        print("",j,")","",i)
         j += 1
 def ZtoA(MovieList):
     i = 0
     j = 1
     MovieNum = 1
-    AtoZList = list() # Creates new list for sorting
+    ZtoAList = list() # Creates new list for sorting
 
-    print(" Here is the list of Movies in your collection from Z to A: ")
-
+    print(" Here is the list of Movies in your collection from A to Z: ")
     while i < len(MovieList): # loop to display each movie in the list
-        AtoZList.append(MovieList[i][6:])
+        ZtoAList.append(MovieList[i][6:] +" :" + MovieList[i][:4:] )
         i += 1
-    AtoZList = sorted(AtoZList, reverse = True) # sorts the list ensure is is reversed
-    for i in AtoZList:
-         print(j,"",i)
-         j += 1
+    ZtoAList.sort(reverse = True)  
+    for i in ZtoAList:
+        print("",j,")","",i)
+        j += 1
+    
+    
              
-MovieList = list() #(["1951: Alice in Wonderland", "1988: Beetlejuice","1994: Ace Ventura: Pet Detective"])
+MovieList = (["1951: Alice in Wonderland","1988: Beetlejuice","1994: Ace Ventura: Pet Detective"])
 Quit = False
+#print(len(MovieList))
 
 while Quit == False:
     print(" Here are some Movie Data Base choices: ") # Displays choices that can modify the list for Movies
@@ -139,6 +150,7 @@ while Quit == False:
             print(" Total amount of Movies in List: ", len(MovieList))
             print(" The longest Title is as follows:",max(MovieList, key=len))
             print(" The shortest Title is as Follows:", min(MovieList, key=len))
+            print(" List from Oldest to Newest is as follows:")
             OldtoNew(MovieList)
     elif choice == "5":
         ShorttoLong(MovieList) #Function Call
@@ -147,9 +159,9 @@ while Quit == False:
     elif choice == "7":
         AtoZ(MovieList) #Function Call
     elif choice == "8":
-        ZtoA(MovieList)   
+        ZtoA(MovieList) # Function Call
     elif choice == "9":
         Quit = True
     else:
-        print("Invalid Option, plese try again!") # if no valid option is chosen the user will be advised. 
+        print(" .....Invalid Option, plese try again!.....") # if no valid option is chosen the user will be advised. 
         print("")
