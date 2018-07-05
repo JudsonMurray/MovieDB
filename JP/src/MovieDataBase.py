@@ -2,7 +2,7 @@
 # Date: 06/29/18
 #Movie Data Base
 
-def DisplayList(MovieList):
+def DisplayList(MovieList):# Displays Movie Titles in list
     MovieNum = 1
     if len(MovieList) > 0:
         print(" Here is the list of Movies in your collection:")
@@ -10,7 +10,7 @@ def DisplayList(MovieList):
             print(" ", MovieNum,")", " ", i)
             MovieNum += 1 # numbers the movies
     else:
-        print(" ........No Movies in Data Base.......") # Displays Movie Titles in list
+        print(" ........No Movies in Data Base.......") 
 def AddtoList(MovieList): # adding movie to list
      Year = 0
      i = 0
@@ -59,32 +59,81 @@ def DisplayStats(MovieList): # Displays Movie List Stats
         print(" The shortest Title is as Follows:", min(MovieList, key=len))
         print(" List from Oldest to Newest is as follows:")
         OldtoNew(MovieList)
-def AddActor(MovieList):
+def AddActor(MovieList): # Add Actor to a specific Movie
+    ValidActorEntry = False
+    ValidMovieChoice = False
     try:
         if len(MovieList) > 0:
-            moviechoice = int(input(" Enter the number for which movie you would like to add actors too?"))
-            MovieKey = MovieList[moviechoice - 1]
-            print(" Movie Chosen:",MovieKey)
-        
-            ActorEntry = str(input(" Enter Actors Name: "))
-        
-            if MovieKey not in Actors:
+            while ValidMovieChoice == False: # Ensure the choice for film to add to is valid. 
+                try:
+                    moviechoice = int(input(" Enter the number for which movie you would like to add actors too?"))
+                    if moviechoice < len(MovieList) and moviechoice > len(MovieList) or moviechoice == 0:
+                        print(" ......Invalid Entry.....")
+                        ValidMovieChoice = False
+                    else:
+                        MovieKey = MovieList[moviechoice - 1]
+                        print(" Movie Chosen:",MovieKey)
+                        ValidMovieChoice = True
+                except Exception:
+                    print(" .......Invalid Entry.....")
+            
+            while ValidActorEntry == False: # Checks to ensure Actor name is valid and not just blank
+                ActorEntry = str(input(" Enter Actors Name: "))
+                if len(ActorEntry) <= 0 or len(ActorEntry.strip()) <= 0:
+                    print(" .......Invalid Entry.....")
+                    ValidActorEntry = False
+                else:
+                    ValidActorEntry = True
+            
+            if  MovieKey not in Actors:
                 Actors.update({MovieKey: [ActorEntry] })
                 print("........Actor Added.......")
                 DisplayActors(Actors) # Shows List of Movies with Actors
         
-            elif MovieKey in Actors:
+            elif MovieKey in Actors and len(ActorEntry.strip()) > 0:
                 Actors[MovieKey].append(ActorEntry)
-                print("........Actor Added.......") 
-            else:
-                pass
-        else:
-           pass
+                print("........Actor Added.......")
+                DisplayActors(Actors) 
+        
     except Exception:
         print(" ......Invalid Entry......")
-def DisplayActors(Actors):
-    MovieNum = 1
+def RemoveActor(MovieList): # Remove an Actor from a specific Movie
+    Numbered = 0
+    ChosenTitle = ""
     if len(Actors) > 0:
+        for key in Actors:
+            MoviewithActors.append(key) # Create a list with movies that has actors in it
+            #print(MoviewithActors)
+        if len(MoviewithActors) > 0: # ensure the list of actors is not empty
+            print(" List Of Movie(s) to Choose from with Actors: ")
+            for i in MoviewithActors:
+                print(" ",str(Numbered + 1) + ")",i) # prints list of movies with Actors
+                Numbered += 1
+        MovieChoice = int(input("Enter the number for the Movie title to remove actors from: ")) # asks which movie to remove an actor from
+        ChosenTitle =  MoviewithActors[MovieChoice - 1]
+        print("Length of vals =", len(Actors[ChosenTitle]))
+
+        if ChosenTitle in Actors:
+            for i in Actors[key]:
+                print(" ",Actors[ChosenTitle].index(i) + 1,")",i) # Displays actors per movie
+            RemoveActor = int(input(" Enter the number for the actor you would like removed: "))
+            if len(Actors[ChosenTitle]) >= 2:
+                del Actors[ChosenTitle][RemoveActor - 1]
+                print(" .......Actor Removed.....")
+                DisplayActors(Actors)
+            elif len(Actors[ChosenTitle]) <= 1:
+                del Actors[ChosenTitle]
+                print(" .......Actor Removed.....")
+                DisplayActors(Actors)
+
+           
+    else:
+        print(" .......No Actors in Data Base......")
+def DisplayActors(Actors):  #Displays Movie with Actors in List
+    MovieNum = 1
+    
+    if len(Actors) > 0:
+        print(" Movies with Actors are as follows: ")
         for key in Actors:
             print("",MovieNum,")"," Movie Title:",key)
             MovieNum += 1
@@ -92,8 +141,8 @@ def DisplayActors(Actors):
             for i in Actors[key]:
                 print(" ",Actors[key].index(i) + 1,")",i) # Displays actors per movie
     else:
-        print(" .........No Actors in Database.........") #Displays Movie with Actors in List
-def RemoveFrList(MovieList):
+        print(" .........No Actors in Database.........")
+def RemoveFrList(MovieList): # Removes from list
     Removed = False
     if len(MovieList) <= 0:
         print(" .......No Movies in the Database......")
@@ -112,8 +161,8 @@ def RemoveFrList(MovieList):
                     print(" ....Movie has been Removed....")
                     #DisplayList(MovieList)
             except Exception:
-                print(" ....Invalid Entry....")  # Removes from list
-def OldtoNew(MovieList):
+                print(" ....Invalid Entry....")
+def OldtoNew(MovieList):  # Sorts and displays Movie Oldest to Newest
     MovieList.sort()
     MovieNum = 1
     if len(MovieList) > 0:
@@ -121,23 +170,23 @@ def OldtoNew(MovieList):
             print(" ", MovieNum,")", " ", i)
             MovieNum += 1 # numbers the movies
     else:
-        print(" .......No Movies in the Database......") # Sorts and displays Movie Oldest to Newest
-def ShorttoLong(MovieList):
+        print(" .......No Movies in the Database......")
+def ShorttoLong(MovieList): # Sorts movie title shortest to longest
     MovieList.sort(key = len) # sorts list based on length
    
     if len(MovieList) > 0:
         print(" Here is the list of Movies in your collection Shortest to Longest: ")
         DisplayList(MovieList)
     else:
-        print(" .......No Movies in the Database......") # Sorts movie title shortest to longest
-def LongtoShort(MovieList):
+        print(" .......No Movies in the Database......") 
+def LongtoShort(MovieList): # Sorts movie title longest to shortest
     MovieList.sort(key = len, reverse = True) # sorts list based on length then reverses list
    
     if len(MovieList) > 0:
         print(" Here is the list of Movies in your collection Longest to Shortest: ")
         DisplayList(MovieList)
     else:
-        print(" .......No Movies in the Database......") # Sorts movie title longest to shortest
+        print(" .......No Movies in the Database......")
 def SwapMovieTitleandYear(MovieList): # swaps movie title and year
     i = 0
     SwapList = list()
@@ -148,7 +197,7 @@ def SwapMovieTitleandYear(MovieList): # swaps movie title and year
 def AtoZ(MovieList): # function to sort list and display aplhabetically
     AtoZList = SwapMovieTitleandYear(MovieList)
     AtoZList.sort()
-    DisplayList(AtoZList)       
+    DisplayList(AtoZList)         
 def ZtoA(MovieList):  # function to sort list and display aplhabetically in reverse
     ZtoAList = SwapMovieTitleandYear(MovieList)
     ZtoAList.sort(reverse = True)
@@ -187,30 +236,11 @@ while Quit == False:
         if len(MovieList) > 0: 
             DisplayList(MovieList) #Function Call
     elif choice == "4":
-        Numbered = 0
-        ChosenTitle = ""
-        if len(Actors) > 0:
-            for key in Actors:
-                MoviewithActors.append(key) # Create a list with movies that has actors in it
-            #print(MoviewithActors)
-            if len(MoviewithActors) > 0: # ensure the list of actors is not empty
-                print(" List Of Movie(s) to Choose from with Actors: ")
-                for i in MoviewithActors:
-                    print(" ",str(Numbered + 1) + ")",i) # prints list of movies with Actors
-                    Numbered += 1
-            MovieChoice = int(input("Enter the number for the Movie title to remove actors from: ")) # asks which movie to remove an actor from
-            ChosenTitle =  MoviewithActors[MovieChoice - 1]
-
-            if ChosenTitle in Actors:
-                for i in Actors[key]:
-                    print(" ",Actors[ChosenTitle].index(i) + 1,")",i) # Displays actors per movie
-            RemoveActor = int(input(" Enter the number for the actor you would like removed: "))
-            del Actors[ChosenTitle][RemoveActor - 1]
-            print(" .......Actor Removed.....")
+        RemoveActor(MovieList) # Function Call
     elif choice == "5":
         DisplayList(MovieList)#Function Call
     elif choice == "6":
-        DisplayActors(Actors)
+        DisplayActors(Actors) # Function Call
     elif choice == "7":
         DisplayStats(MovieList)#Function Call
     elif choice == "8":
