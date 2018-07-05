@@ -6,14 +6,17 @@
 #   v0.1:   (06/25/2018) Initial Version (Movies)
 #   v0.2:   (06/30/2018) Adding Year Support for Movies (Name/Year Composite Key)
 #   v0.3:   (07/01/2018) Added Movie Summary Info
+#   v0.4:   (07/02/2018) Added Sorting options for Viewing Movies
 
 menuFilter = None
 
 def displayMainMenu():
+
     print('1: View Movie List')
     print('2: Add a Movie')
     print('3: Remove a Movie')
     print('4: Movie Summary')
+    print('5: Change View Options')
     print('Q: Quit')
 
     print('Select a choice:',end='')
@@ -32,9 +35,32 @@ def displayMainMenu():
 
 def showMovieList(mList):
 
-    print('\n','----- Movies -----')
+    #   (C) Chronological (DEFAULT)
+    #   (S) Shortest - Longest
+    #   (L) Longest - Shortest
+    #   (A) Alphabetical
+    #   (R) Reverse Alphabetical
+   
+    print('\n','----- Movies -----', currViewOption[0])
     if len(mList) > 0:
-        for i,v in enumerate(mList):
+
+        if currViewOption[0] == 'S':
+            displayList = sorted(mList, key = lambda k: len(k['name']))
+        elif currViewOption[0] == 'L':
+            displayList = sorted(mList, key = lambda k: len(k['name']),reverse=True)
+        elif currViewOption[0] == 'A':
+            displayList = sorted(mList, key = lambda k: k['name'])
+        elif currViewOption[0] == 'R':
+            displayList = sorted(mList, key = lambda k: k['name'],reverse=True)
+        elif currViewOption[0] == 'O':
+            displayList = sorted(mList, key = lambda k: k['year'])
+        elif currViewOption[0] == 'N':
+            displayList = sorted(mList, key = lambda k: k['year'],reverse=True)
+        else:
+            displayList = mList
+
+        #for i,v in enumerate(mList):
+        for i,v in enumerate(displayList):
             print(i+1,': ',v['name'],' (', v['year'],')',sep='')
     else:
         print("**** NO MOVIES ****")
@@ -91,21 +117,48 @@ def movieStats(mList):
 
 #   -------------------------------------------------
 
+def changeSortOption(currViewOpt):
+    
+    print()
+    print("Current View Option: ",currViewOpt[0])
+    print()
+    print(  "Select View Option:",
+            "(S) Shortest - Longest",
+            "(L) Longest - Shortest",
+            "(A) Alphabetical",
+            "(R) Reverse Alphabetical",
+            "(O) Oldest - Newest",
+            "(N) Newest - Oldest",
+            "(C) Chronological",
+        sep='\n')
 
+    print()
+    newOption = input().upper()
+    while(newOption not in "SLARCON"):
+        print("INVALID OPTION")
+        newOption = input().upper()
+    
+    if len(newOption) > 0:
+        currViewOpt[0] = newOption
+    return
 
-
+#   -------------------------------------------------
 movieList = []
 #   Default Movie Information
 movieList.append({'name':'Serenity','year':2005})
 movieList.append({'name':'Predator','year':1987})
 movieList.append({'name':'Salton Sea','year':2002})
+movieList.append({'name':'Cube','year':1980})
 
 menuOptions = { '1':showMovieList,
                 '2':addMovie,
                 '3':removeMovie,
                 '4':movieStats,
+                '5':changeSortOption,
                 'Q':exit,
                 ' ':print}
+
+currViewOption = ['C']
 
 menuFilter = ''
 for i in menuOptions:
@@ -116,5 +169,7 @@ while True:
 
     if choice == 'Q':
         break ;    
-
-    menuOptions[choice](movieList)
+    if choice == '5':
+        changeSortOption(currViewOption)
+    else:
+        menuOptions[choice](movieList)
