@@ -3,7 +3,8 @@
 #   Purpose:    Reference Implementation for Movie DB Project
 
 #   Version History:
-#   v0.1:   Initial Version (Movies)
+#   v0.1:   (06/25/2018) Initial Version (Movies)
+#   v0.2:   (06/30/2018) Adding Year Support for Movies (Name/Year Composite Key)
 
 
 menuFilter = None
@@ -15,11 +16,6 @@ def displayMainMenu():
     print('Q: Quit')
 
     print('Select a choice:',end='')
-
-    #ui = input().capitalize()                  #   Previous implementation of Menu Filter
-    #while len(ui) != 1 or ui not in '123Q ':
-    #    print('Try again: ',end='')
-    #    ui = input().capitalize()
     
     while True:
         try:
@@ -37,8 +33,8 @@ def showMovieList(mList):
 
     print('\n','----- Movies -----')
     if len(mList) > 0:
-        for i in mList:
-            print(mList.index(i)+1,': ',i)
+        for i,v in enumerate(mList):
+            print(i+1,': ',v['name'],' (', v['year'],')',sep='')
     else:
         print("**** NO MOVIES ****")
 
@@ -50,9 +46,17 @@ def addMovie(mList):
     print('----- Add Movies -----')
 
     showMovieList(mList)
-    newMovie = input("Enter Movie to add:")
-    if len(newMovie) > 0:
-        mList.append(newMovie)
+    newMovieName = input("Enter Movie name to add:")
+    newMovieYear = input("Enter Movie year")
+
+    if len(newMovieName) > 0:
+
+        for movieEntry in mList:
+            if movieEntry['year'] == int(newMovieYear) and movieEntry['name'] == newMovieName:
+                print('Sorry, Movie exists!')
+                break
+        else:
+            mList.append({'name':newMovieName,'year':newMovieYear})
 
 def removeMovie(mList):
 
@@ -63,25 +67,27 @@ def removeMovie(mList):
     if len(mList) > 0:
         try:
             delMovie = int(input("Select Movie # to remove:"))
-            if delMovie >= 0 and delMovie < len(mList):
-                mList.remove(mList[delMovie])
+            if delMovie > 0 and delMovie <= len(mList):
+                mList.remove(mList[delMovie-1])
+            else:
+                raise Exception
         except:
+            print('Invalid Option!')
             pass
 
 #   -------------------------------------------------
 
 movieList = []
-movieList.append('Serenity')
-movieList.append('Predator')
-movieList.append('Salton Sea')
+#   Default Movie Information
+movieList.append({'name':'Serenity','year':2005})
+movieList.append({'name':'Predator','year':1987})
+movieList.append({'name':'Salton Sea','year':2002})
 
 menuOptions = {'1':showMovieList,'2':addMovie,'3':removeMovie,'Q':exit,' ':print}
 
 menuFilter = ''
 for i in menuOptions:
     menuFilter += i
-
-#print(menuFilter)
 
 while True:
     choice = displayMainMenu()
