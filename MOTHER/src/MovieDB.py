@@ -9,6 +9,7 @@
 #   v0.4:   (07/02/2018) Added Sorting options for Viewing Movies
 #   v0.5:   (07/17/2018) Adding Actor DB and Linking behaviour to Movies
 #                        Refactored Menu Implementation for Maintainability
+#   v0.6    (07/19/2018) Resolved Defects 1 - 14 for Test Report #1
 
 import uuid
 import os
@@ -73,7 +74,11 @@ def addMovie(mList):
     showMovieList(mList)
 
     try:
-        newMovieName = input("Enter Movie name to add:")
+
+        newMovieName = ''
+        while(len(newMovieName.strip()) <= 0):              #Resolution for Defect 1 - Whitespace Movie Name(s): TC05
+            newMovieName = input("Enter Movie name to add:")
+
         newMovieYear = int(input("Enter Movie year:"))
 
         if len(newMovieName) > 0:
@@ -119,7 +124,7 @@ def removeMovie(mList):
             else:
                 raise Exception
         except Exception as e:
-            print(e)
+            #print(e)                   # Resolution for Defect(s) 2/3 - Showing Exception information for invalid choice selection: TC10 / TC11
             print('Invalid Option!')
             pass
 
@@ -131,11 +136,18 @@ def movieStats(mList):
     print()
     print('----- Movie Stats -----')
 
-    print('Total Movies:',len(mList))
-    print('Oldest Movie:', min(movie['year'] for movie in mList))
-    print('Newest Movie:', max(movie['year'] for movie in mList))
-    print('Shortest Title:',min(len(movie['name']) for movie in mList))    
-    print('Longest Title:',max(len(movie['name']) for movie in mList))
+    #   Resolution for Defect 4 - Exceptions when # of Movies in DB is 0: TC13
+    totalMovies =   len(mList)
+    oldestMovie =   min(movie['year'] for movie in mList) if totalMovies > 0 else '--'
+    newestMovie =   max(movie['year'] for movie in mList) if totalMovies > 0 else '--'
+    shortestTitle = min(len(movie['name']) for movie in mList) if totalMovies > 0 else '--'
+    longestTitle =  max(len(movie['name']) for movie in mList)if totalMovies > 0 else '--'
+
+    print('Total Movies:',totalMovies)
+    print('Oldest Movie:', oldestMovie)
+    print('Newest Movie:', newestMovie)
+    print('Shortest Title:',shortestTitle)    
+    print('Longest Title:',longestTitle)
     print()
 
 #   -------------------------------------------------
@@ -219,7 +231,12 @@ def addActor(actList):
     showActorList(actList)
 
     try:
-        newActorName = input("Enter Actor name to add:")
+        
+
+        newActorName = ''
+        while(len(newActorName.strip()) <= 0):              #   Resolution for Defect 5 - Whitespace Actor Name(s): TC34
+            newActorName = input("Enter Actor name to add:")
+
         newActorYear = int(input("Enter Actor year:"))
 
         if len(newActorName) > 0:
@@ -267,7 +284,10 @@ def linkActor(actList):
     if len(actList) > 0:
         actSelect = 0
         while actSelect < 1 or actSelect >len(actList) :
-            actSelect = int(input("Choose Actor:"))
+            try:    
+                actSelect = int(input("Choose Actor:")) #   Resolution for Defect(s) 6/7 - Wrong Datatype for Actor Selection(s): TC45 / 46
+            except:
+                actSelect = 0
 
         #   Show Movie(s) that Actor is currently linked to
         print("Actor:",actList[actSelect-1]['name'])
@@ -289,10 +309,15 @@ def linkActor(actList):
 
                 linkSelect = None
                 while linkSelect not in newMovieDB:
-                    linkSelect = int(input("Choose Movie to Link:"))
+                    try:
+                        linkSelect = int(input("Choose Movie to Link:"))    #   Resolution for Defect(s) 11/12 -  Wrong Datatype for Movie Selection(s): TC58 / 59
+                    except:
+                        linkSelect = None
         
                 #   Add Movie to Actor's List of Movie Referencess
                 actList[actSelect-1]['movieList'].add(linkSelect)
+            else:
+                print("-- NO MOVIES TO LINK TO --") #   Resolution for Defect 8 - Fix for Lacking Info on Empty Movie DB : TC49
 
 #   -------------------------------------------------------
 
@@ -307,8 +332,12 @@ def unlinkActor(actList):
 
     if len(actList) > 0:
         actSelect = 0
+        
         while actSelect < 1 or actSelect >len(actList) :
-            actSelect = int(input("Choose Actor:"))
+            try:    
+                actSelect = int(input("Choose Actor:")) #   Resolution for Defect(s) 9/10 - Wrong Datatype for Actor Selection(s): TC51 / 52
+            except:
+                actSelect = 0
             
         if len(actList[actSelect-1]['movieList']) == 0:
             print("Sorry - No Movies!")
@@ -318,7 +347,11 @@ def unlinkActor(actList):
 
             linkSelect = None
             while linkSelect not in newMovieDB:
-                linkSelect = int(input("Choose Movie to UnLink:"))
+                try:
+                    linkSelect = int(input("Choose Movie to UnLink:"))  #   Resolution for Defect(s) 13/14 -  Wrong Datatype for Movie Selection(s): TC60 / 61
+                except:
+                    linkSelect = None
+
         
             #   Add Movie to Actor's List of Movie Referencess
             actList[actSelect-1]['movieList'].remove(linkSelect)
